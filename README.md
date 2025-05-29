@@ -2,15 +2,28 @@
 
 ## 📋 Table of Contents
 
-1. [Appointment](#-appointment)
-2. [Authentication Process](#-the-authentication-process)
-   - [Sending data](#%EF%B8%8F-sending-data-to-the-server)
-   - [Dashboard Operations](#-processing-and-display-on-the-dashboard)
-   - [Movement Tracking](#%EF%B8%8F-operational-tracking-of-movements)
-3. [Event Displays](#-event-displays)
-4. [Web Interface Authorization](#-authorization-in-the-web-interface)
-5. [HTTPS Implementation](#-https-web-interface-and-certificate-generation)
-6. [Authors](#authors)
+1. [Security Testing Objectives](#%EF%B8%8F-a-brief-description-of-the-acs-security-testing-project)
+2. [Hardware and software](#-the-hardware-and-software-used)
+   - [Hardware](#1-%EF%B8%8F-hardware)
+   - [Software](#2--software-acs)
+   - [Testing Software](#3-%EF%B8%8F-testing-software-kali-linux)
+3. [Kali Linux Tools](#-additional-kali-linux-tools)
+   - [Vulnerability scanners](#%EF%B8%8F-1-vulnerability-scanners)
+   - [Traffic Analysis Tools](#-2-traffic-analysis-tools)
+   - [Attacks on web applications](#-3-attacks-on-web-applications)
+   - [Password analysis tools](#%EF%B8%8F-4-password-analysis-tools)
+   - [Social engineering and phishing](#-5-social-engineering-and-phishing)
+   - [Checking wireless networks](#-6-checking-wireless-networks)
+   - [Frameworks and automation](#%EF%B8%8F-7-frameworks-and-automation)
+4. [Denial of Service Testing (DoS/DDoS)](#%EF%B8%8F-denial-of-service-testing-dosddos)
+   - [Attacks used in testing](#-attacks-used-in-testing)
+   - [Using the hping3 tool](#-using-the-hping3-tool)
+   - [Test results](#test-results)
+5. [HTTP/2 Rapid Reset attack](#-http2-rapid-reset-attack)
+   - [The principle of operation](#-the-principle-of-operation)
+   - [Implementation of the attack](#2--software-acs)
+   - [Results and protection](#2%EF%B8%8F-results-and-protection)
+7. [Authors](#authors)
 
 ## 🛡️ A brief description of the ACS security testing project
 
@@ -240,7 +253,7 @@ The HTTP/2 Rapid Reset attack uses the specifics of the HTTP/2 protocol, in whic
 
 As a result, the server spends significant computing and network resources on managing a multitude of incomplete threads, which reduces its performance and can lead to denial of service (DoS) attacks.
 
-⚙️ Implementation of the attack
+### ⚙️ Implementation of the attack
 
 Specialized tools or custom scripts were used to carry out the attack, which:
 
